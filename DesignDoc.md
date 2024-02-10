@@ -108,7 +108,7 @@ creating thread -> copy on write minus write protection. Data changes are okay, 
 
 Passing argument -> worry about passing pointer to a struct, but in kernel you can't access structure b/c kernal has it's own page table, two functions to ccopyin and copyout. 
 
-Thread termination, make assumptions that make things early. Have them call a function to exit -> undefined if not.
+Thread termination, make assumptions that make things easy. Have them call a function to exit -> undefined if not.
 
 
 ### Can we use uvmcopy?
