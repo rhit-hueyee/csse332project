@@ -4,7 +4,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 
-static struct thread*
+struct thread*
 thread_create(void (*fn)(void), void *arg){
 struct proc *np;
 struct proc *p = myproc();
@@ -13,7 +13,6 @@ if((np = allocproc()) == 0){
   return -1;
 }
 
-np->pagetable = p->pagetable;//sharing a pagetable
 np->sz = p->sz//same size
 np->paent_process = p;//setting parent
 np->is_thread = 1;//we have to add this to attribute to proc.c
@@ -29,9 +28,8 @@ return -1
 }
 
 //code below is trying to set up contetx for the function provided in the thread call
-memset(&np->context, 0, sizeof(np->context));
-np->context.ra = (uint64)fn;
-np->context.sp = np->trapframe->sp;
+//memset(&np->context, 0, sizeof(np->context));
+
 //do we need to set this stuff in both trap frame and context?
 
 //np->trapframe->
