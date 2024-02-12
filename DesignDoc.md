@@ -134,6 +134,31 @@ We will have an initial main thread that knows about all created threads. All th
 
 The threads will only be able to occupy a limited size of the stack. The first thread will start at the top of the allotted space. The second stack will spawn halfway between the first thread and end of the allotted stack. We will keep cutting in half and chucking the thread data. Stack location will be stored in thread metadata.  If the stacks collide the behavior will be undefined. When a given thread terminates, its slot in the thread ladder will be marked as unoccupied, and occupying it will take priority over creating a new slot in the stack. This solution will probably be easier to implement if we limit the number of threads to like 16 or so.
 
+Could ask main to pre allocate stacks for you,
+Allocate pages in main thread
+Ask main to preallocate stack -> put that on the user
+malloc 4096 bytes and pass pointer
+
+If you allocate stack in thread, you have to update everyone's page table
+
+trap frame - once you get out of allocproc yo uhave your our mapped trapframe and trampoline, you may have to change variables but you don't have to 
+Don't set the trap frames to be the same
+
+Create copies of the page tables, but don't copy the data
+Build the chain except for the data part
+
+We did that in COW, don't touch permissions
+
+RA is where you want to return too from the function that called you
+
+Usertrap.c -> epc is where the interrupt happened
+mess with epc to mess with return -> function's arg
+vm.c
+proc.c
+userspace.c
+
+kprogs
+remove static
 
 ### How to Pass Argument to Threads:
 
