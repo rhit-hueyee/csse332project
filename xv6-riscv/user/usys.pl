@@ -16,7 +16,6 @@ sub entry {
 }
 	
 entry("fork");
-entry("thread_create");
 entry("exit");
 entry("wait");
 entry("pipe");
@@ -37,3 +36,4 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
+entry("thread_create");

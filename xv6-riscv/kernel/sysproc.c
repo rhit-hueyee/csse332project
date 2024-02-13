@@ -90,9 +90,15 @@ sys_uptime(void)
   return xticks;
 }
 
-uint64 sys_create_thread(void)
+uint64 sys_thread_create(void)
 {
-	uint64 addr;
-	argaddr(0, &addr);
-	return create_thread((void*)addr);
+
+	//arg adder, argint, argchar, allow us to extract args from paramets
+	uint64 addr_fn;
+	argaddr(0, &addr_fn);
+	uint64 addr_args;
+	argaddr(1, &addr_args);
+	uint64 addr_stck_ptr;
+	argaddr(2, &addr_stck_ptr);
+	return thread_create((void*)addr_fn, (void*)addr_args, (int*)addr_stck_ptr);
 }

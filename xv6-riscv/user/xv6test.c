@@ -7,17 +7,16 @@
 
 void *print_hello_world(void *arg) {
     printf("Hello World\n");
-    return NULL; // Since we're not really returning anything meaningful
+    return NULL;
 }
 
 int test_print_hello_world() {
-    // perform test
-    int* ptr = (int*)malloc(4096); // It's a good practice to cast the return value of malloc in C
+    int* ptr = (int*)malloc(4096); 
     printf("Malloced\n");
 
     if (ptr == NULL) {
 	    printf("Malloc failed\n");
-        return 1; // indicate memory allocation failure
+        return 1;
     }
 
     printf("creating thread\n");
@@ -30,7 +29,6 @@ int test_print_hello_world() {
 
 
 int test2() {
-    // perform another test
     return 0; // return 0 on success, non-zero on failure
 }
 
@@ -38,13 +36,12 @@ int main() {
 	printf("Beginning Test 1\n");
     if (test_print_hello_world() != 0) {
 	    printf("Test 1 Fail\n");
-        exit(1); // indicate test1 failed
+        exit(1);
     }
 
     if (test2() != 0) {
-        exit(2); // indicate test2 failed
+        exit(2);
     }
 
-    // If we reached here, all tests passed
     exit(0);
 }

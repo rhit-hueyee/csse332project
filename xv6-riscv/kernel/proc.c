@@ -336,30 +336,27 @@ if((np = allocproc()) == 0){
 }
 
 np->sz = p->sz; //same size
-np->parent = p; //setting parent
-np->is_thread = 1; //we have to add this to attribute to proc.c
+np->parent = p; //setting parent to og proc
+np->is_thread = 1; //we are creating a thread (((φ(◎ロ◎;)φ)))
 
-p->trapframe->epc = (uint64)fn; // Program counter starts at fn.
-np->context.sp = stack_ptr; // Set stack pointer to the top of the new stack.
-np->trapframe->a0 = (uint64)arg;
-//np->trapframe->sp = alloc_stack(np->pagetable, np->sz);
-//
-//we dont know how to get this unique pointer for stack space
+p->trapframe->epc = (uint64)fn; // epc starts at fn.
+np->context.sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
+np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
 
-if(np->context.sp == 0){
+/*
+if(np->context.sp == 0){ //sets context
 //this is for handling error when creating new sp
  freeproc(np);
  return -1;
 }
+*/
 
-//code below is trying to set up contetx for the function provided in the thread call
-//memset(&np->context, 0, sizeof(np->context));
+acquire(&wait_lock);
+np->parent = p;
+release(&wait_lock);
 
-//do we need to set this stuff in both trap frame and context?
-
-//np->trapframe->
-//how do we set up trap frame?
-
+acquire(&np->lock);
+np->state = RUNNABLE;
 release(&np->lock);
 
 return 0;
