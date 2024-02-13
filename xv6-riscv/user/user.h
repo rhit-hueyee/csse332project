@@ -2,6 +2,7 @@ struct stat;
 
 // system calls
 int fork(void);
+int thread_create(void *(*start_routine)(void *), void*, unsigned long stack);
 int exit(int) __attribute__((noreturn));
 int wait(int*);
 int pipe(int*);

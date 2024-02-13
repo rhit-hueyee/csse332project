@@ -16,6 +16,7 @@ sub entry {
 }
 	
 entry("fork");
+entry("thread_create");
 entry("exit");
 entry("wait");
 entry("pipe");

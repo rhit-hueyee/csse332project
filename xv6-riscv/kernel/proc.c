@@ -325,9 +325,9 @@ fork(void)
   return pid;
 }
 
-//INSANE JUICE, CODING THE THREAD ON GAKU
-struct thread*
-thread_create(void (*fn)(void), void *arg, int *stacker){
+//INSANE JUICE, CODING THE THREADruct thread*
+int
+thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr){
 struct proc *np;
 struct proc *p = myproc();
 
@@ -335,18 +335,21 @@ if((np = allocproc()) == 0){
   return -1;
 }
 
-np->sz = p->sz//same size
-np->paent_process = p;//setting parent
-np->is_thread = 1;//we have to add this to attribute to proc.c
+np->sz = p->sz; //same size
+np->parent = p; //setting parent
+np->is_thread = 1; //we have to add this to attribute to proc.c
 
+p->trapframe->epc = (uint64)fn; // Program counter starts at fn.
+np->context.sp = stack_ptr; // Set stack pointer to the top of the new stack.
+np->trapframe->a0 = (uint64)arg;
 //np->trapframe->sp = alloc_stack(np->pagetable, np->sz);
 //
 //we dont know how to get this unique pointer for stack space
 
-if(np->trapframe->sp == 0){
+if(np->context.sp == 0){
 //this is for handling error when creating new sp
-freeproc(np);
-return -1
+ freeproc(np);
+ return -1;
 }
 
 //code below is trying to set up contetx for the function provided in the thread call
@@ -358,6 +361,10 @@ return -1
 //how do we set up trap frame?
 
 release(&np->lock);
+
+return 0;
+
+}
 
 
 // Pass p's abandoned children to init.

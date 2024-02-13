@@ -9,6 +9,8 @@
 #include "riscv.h"
 #include "defs.h"
 
+#define FRINDEX(pa) ((uint64)pa - KERNBASE) / PGSIZE
+
 void freerange(void *pa_start, void *pa_end);
 
 extern char end[]; // first address after kernel.
@@ -21,6 +23,7 @@ struct run {
 struct {
   struct spinlock lock;
   struct run *freelist;
+  int total_frames[(PHYSTOP - KERNBASE) / PGSIZE];
 } kmem;
 
 void
@@ -46,19 +49,31 @@ freerange(void *pa_start, void *pa_end)
 void
 kfree(void *pa)
 {
-  struct run *r;
+  struct run *r = (struct run*)pa;
 
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
 
   // Fill with junk to catch dangling refs.
-  memset(pa, 1, PGSIZE);
+  //memset(pa, 1, PGSIZE);
 
-  r = (struct run*)pa;
+  //r = (struct run*)pa;
+  //
+  acquire(&kmem.lock);
+  kmem.total_frames[FRINDEX(pa)]--;
+  if (kmem.total_frames[FRINDEX(pa)] <= 0 ) {
+	  //struct run *r = (struct run*)pa;
+	  r->next = kmem.freelist;
+	  kmem.freelist = r;
+	  kmem.total_frames[FRINDEX(pa)] = 0;
+  }
+  /*
 
   acquire(&kmem.lock);
   r->next = kmem.freelist;
   kmem.freelist = r;
+
+  */
   release(&kmem.lock);
 }
 
@@ -79,4 +94,10 @@ kalloc(void)
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
+}
+
+void my_function(uint64 pa) {
+	acquire(&kmem.lock);
+	kmem.total_frames[FRINDEX(pa)]++;
+	release(&kmem.lock);
 }

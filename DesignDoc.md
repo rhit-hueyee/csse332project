@@ -118,6 +118,8 @@ No, as the threads need to share the same memory, which forking does not want to
 
 ### Function API
 
+`thread_init()`
+
 `thread_create(thread_t thread,  void *(*start_routine)(void *), void *arg)`
 
 `thread_join(thread_t thread)`
@@ -168,3 +170,9 @@ Or idea: we just have the previous thread set up a new variable on the stack wit
 ### Thread Termination
 
 When a thread terminates, its shared pages are not freed. The pages aren’t affected by a single thread’s termination, only when the main thread terminates. The main thread also no longer keeps track of the thread. The thread’s space on the stack gets clear
+
+
+### Using Threads
+1. You have to initialize the threads by running thread_init()
+2. You then can create thread 
+3. Kill yourself
