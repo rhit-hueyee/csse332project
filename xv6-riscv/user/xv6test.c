@@ -11,6 +11,11 @@ void *print_hello_world(void *arg) {
 }
 
 int test_print_hello_world() {
+	print_hello_world(NULL);
+	return 0;
+}
+
+int test_thread_print_hello_world() {
     int* ptr = (int*)malloc(4096); 
     printf("Malloced\n");
 
@@ -20,10 +25,13 @@ int test_print_hello_world() {
     }
 
     printf("creating thread\n");
+	
+	printf("The eepy sea is %d\n", (uint64)print_hello_world);
+	int i = thread_create(print_hello_world, NULL, (uint64)ptr);
 
-    thread_create(print_hello_world, NULL, (uint64)ptr);
+    printf("Successfully created teh threahd\n");
 
-    return 0; // return 0 on success, non-zero on failure
+    return i; // return 0 on success, non-zero on failure
 }
 
 
@@ -33,11 +41,17 @@ int test2() {
 }
 
 int main() {
+	if (test_print_hello_world() != 0) {
+		exit(1);
+		
+	}
+	
 	printf("Beginning Test 1\n");
-    if (test_print_hello_world() != 0) {
+    if (test_thread_print_hello_world() != 0) {
 	    printf("Test 1 Fail\n");
         exit(1);
     }
+	printf("Finished Test 1\n");
 
     if (test2() != 0) {
         exit(2);

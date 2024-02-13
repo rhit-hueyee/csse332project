@@ -100,5 +100,5 @@ uint64 sys_thread_create(void)
 	argaddr(1, &addr_args);
 	uint64 addr_stck_ptr;
 	argaddr(2, &addr_stck_ptr);
-	return thread_create((void*)addr_fn, (void*)addr_args, (int*)addr_stck_ptr);
+	return thread_create((void*)addr_fn, (void*)addr_args, (uint64)addr_stck_ptr);
 }

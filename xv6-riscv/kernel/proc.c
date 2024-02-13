@@ -327,39 +327,57 @@ fork(void)
 
 //INSANE JUICE, CODING THE THREADruct thread*
 int
-thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr){
-struct proc *np;
-struct proc *p = myproc();
+thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
+{
+	struct proc *np;
+	struct proc *p = myproc();
 
-if((np = allocproc()) == 0){
-  return -1;
-}
+	printf("Attempting to allocate proc\n");
 
-np->sz = p->sz; //same size
-np->parent = p; //setting parent to og proc
-np->is_thread = 1; //we are creating a thread (((φ(◎ロ◎;)φ)))
+	if((np = allocproc()) == 0){
+	return -1;
+	}
+	printf("Success Alloc Proc\n");
+	
+	printf("Configuring New Proc\n");
 
-p->trapframe->epc = (uint64)fn; // epc starts at fn.
-np->context.sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
-np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
+	np->sz = p->sz; //same size
+	np->parent = p; //setting parent to og proc
+	np->is_thread = 1; //we are creating a thread (((φ(◎ロ◎;)φ)))
 
-/*
-if(np->context.sp == 0){ //sets context
-//this is for handling error when creating new sp
- freeproc(np);
- return -1;
-}
-*/
+	printf("Completed Configuring New Proc\n");
 
-acquire(&wait_lock);
-np->parent = p;
-release(&wait_lock);
+	np->trapframe->epc = (uint64)fn; // epc starts at fn.
+	printf("The eepy sea is %d\n", (uint64)fn);
+	np->context.sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
+	np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
+	
+	printf("setting np trapframe and context complete\n");
 
-acquire(&np->lock);
-np->state = RUNNABLE;
-release(&np->lock);
 
-return 0;
+	if(uvmcopymap(p->pagetable, np->pagetable, np->sz) < 0){
+		freeproc(np);
+		release(&np->lock);
+		return -1;
+	}
+	
+	printf("successfully unvmcopymaped\n");
+	
+	release(&np->lock);
+	
+	acquire(&wait_lock);
+	np->parent = p;
+	release(&wait_lock);
+	
+	printf("Set Parent\n");
+
+	acquire(&np->lock);
+	np->state = RUNNABLE;
+	release(&np->lock);
+	
+	printf("Successful thread creation\n");
+
+	return 0;
 
 }
 
@@ -494,6 +512,7 @@ scheduler(void)
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
+		  //printf("New Juicer xqc amongus\n");
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
