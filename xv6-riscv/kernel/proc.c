@@ -349,7 +349,7 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 
 	np->trapframe->epc = (uint64)fn; // epc starts at fn.
 	printf("The eepy sea is %d\n", (uint64)fn);
-	np->context.sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
+	np->trapframe->sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
 	np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
 	
 	printf("setting np trapframe and context complete\n");
