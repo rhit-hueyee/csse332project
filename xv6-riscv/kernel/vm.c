@@ -332,6 +332,50 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
   return -1;
 }
 
+//EXTRA UVM COPY EXTRA EXTRA
+// Given a parent process's page table, copy
+// its memory into a child's page table.
+// Copies both the page table and the
+// physical memory.
+// returns 0 on success, -1 on failure.
+// frees any allocated pages on failure.
+//BONUS UVM COPY
+int
+uvmcopymap(pagetable_t old, pagetable_t new, uint64 sz)
+{
+  pte_t *pte;
+  //uint64 pa,
+  uint64  i;
+  uint flags;
+  //char *mem;
+
+  for(i = 0; i < sz; i += PGSIZE){
+    if((pte = walk(old, i, 0)) == 0)
+      panic("uvmcopy: pte should exist");
+    if((*pte & PTE_V) == 0)
+      panic("uvmcopy: page not present");
+
+
+    if((*pte & PTE_W) != 0) {
+	    *pte &= ~PTE_W;
+	    *pte |= PTE_RSW;
+    }
+
+    flags = PTE_FLAGS(*pte);
+    if(mappages(new, i, PGSIZE, PTE2PA(*pte), flags) != 0) {
+	    uvmunmap(new, 0, i / PGSIZE, 1);
+	    goto err;
+    }
+    my_function(PTE2PA(*pte));
+  }
+  return 0;
+
+ err:
+  uvmunmap(new, 0, i / PGSIZE, 1);
+  return -1;
+}
+
+
 // mark a PTE invalid for user access.
 // used by exec for the user stack guard page.
 void
