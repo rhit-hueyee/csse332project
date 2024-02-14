@@ -10,6 +10,8 @@ void *print_hello_world(void *arg) {
     return NULL;
 }
 
+void* (*phw_ptr)(void *arg) = &print_hello_world;
+
 int test_print_hello_world() {
 	print_hello_world(NULL);
 	return 0;
@@ -26,8 +28,10 @@ int test_thread_print_hello_world() {
 
     printf("creating thread\n");
 	
-	printf("The eepy sea is %d\n", (uint64)print_hello_world);
-	int i = thread_create(print_hello_world, NULL, (uint64)ptr);
+	printf("The eepy sea is %d\n", (uint64)phw_ptr);
+  printf("the raw phw is %d\n", *phw_ptr);
+  printf("the juicer juice is %d\n", &phw_ptr);
+	int i = thread_create(phw_ptr, NULL, (uint64)ptr);
 
     printf("Successfully created teh threahd\n");
 
