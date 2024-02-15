@@ -7,7 +7,8 @@
 
 void *print_hello_world(void *arg) {
     printf("Hello World\n");
-    return NULL;
+    exit(0);
+    //return NULL;
 }
 
 void* (*phw_ptr)(void *arg) = &print_hello_world;
@@ -32,8 +33,9 @@ int test_thread_print_hello_world() {
   printf("the raw phw is %d\n", *phw_ptr);
   printf("the juicer juice is %d\n", &phw_ptr);
 	int i = thread_create(phw_ptr, NULL, (uint64)ptr);
-  sleep(10);
-
+  int *j = &i;
+  wait(j);
+  printf("XXXX %d\n", i);
     printf("Successfully created teh threahd\n");
 
     return i; // return 0 on success, non-zero on failure
@@ -46,11 +48,6 @@ int test2() {
 }
 
 int main() {
-	if (test_print_hello_world() != 0) {
-		exit(1);
-		
-	}
-	
 	printf("Beginning Test 1\n");
     if (test_thread_print_hello_world() != 0) {
 

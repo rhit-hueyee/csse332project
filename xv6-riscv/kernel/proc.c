@@ -183,7 +183,7 @@ proc_pagetable(struct proc *p)
   if(pagetable == 0)
     return 0;
 
-  // map the trampoline code (for system call return)
+    // map the trampoline code (for system call return)
   // at the highest user virtual address.
   // only the supervisor uses it, on the way
   // to/from user space, so not PTE_U.
@@ -353,8 +353,6 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
 	
 	printf("setting np trapframe and context complete\n");
-
-
 	if(uvmcopymap(p->pagetable, np->pagetable, np->sz) < 0){
 		freeproc(np);
 		release(&np->lock);
@@ -384,8 +382,8 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 
   printf("%d\n", fn);
   printf("Successful thread creation\n");
-
-	return 0;
+  p->trapframe->a0 = (uint64)np->pid;
+	return np->pid;
 
 }
 
