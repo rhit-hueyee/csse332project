@@ -32,6 +32,7 @@ int test_thread_print_hello_world() {
   printf("the raw phw is %d\n", *phw_ptr);
   printf("the juicer juice is %d\n", &phw_ptr);
 	int i = thread_create(phw_ptr, NULL, (uint64)ptr);
+  sleep(10);
 
     printf("Successfully created teh threahd\n");
 
@@ -52,6 +53,7 @@ int main() {
 	
 	printf("Beginning Test 1\n");
     if (test_thread_print_hello_world() != 0) {
+
 	    printf("Test 1 Fail\n");
         exit(1);
     }

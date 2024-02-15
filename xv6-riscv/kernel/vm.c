@@ -363,7 +363,7 @@ uvmcopymap(pagetable_t old, pagetable_t new, uint64 sz)
 	    uvmunmap(new, 0, i / PGSIZE, 1);
 	    goto err;
     }
-    my_function(PTE2PA(*pte));
+    //my_function(PTE2PA(*pte));
   }
   return 0;
 

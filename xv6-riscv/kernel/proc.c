@@ -347,8 +347,8 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 
 	printf("Completed Configuring New Proc\n");
 
-	np->trapframe->epc = (uint64)&fn; // epc starts at fn.
-	printf("The eepy sea is %d\n", (uint64)&fn);
+	np->trapframe->epc = (uint64)fn; // epc starts at fn.
+	printf("The eepy sea is %d\n", (uint64)fn);
 	np->trapframe->sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
 	np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
 	
@@ -362,9 +362,16 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	}
 	
 	printf("successfully unvmcopymaped\n");
+
 	
-	release(&np->lock);
-	
+ for(int i = 0; i < NOFILE; i++)
+    if(p->ofile[i])
+      np->ofile[i] = filedup(p->ofile[i]);
+
+  np->cwd = idup(p->cwd);
+
+  release(&np->lock);
+
 	acquire(&wait_lock);
 	np->parent = p;
 	release(&wait_lock);
