@@ -357,6 +357,12 @@ uvmcopymap(pagetable_t old, pagetable_t new, uint64 sz)
     if((*pte & PTE_V) == 0)
       panic("uvmcopy: page not present");
 
+	/*
+    if((*pte & PTE_W) != 0) {
+	    *pte &= ~PTE_W;
+	    *pte |= PTE_RSW;
+    }
+	*/
 
     flags = PTE_FLAGS(*pte);
     if(mappages(new, i, PGSIZE, PTE2PA(*pte), flags) != 0) {
@@ -371,7 +377,6 @@ uvmcopymap(pagetable_t old, pagetable_t new, uint64 sz)
   uvmunmap(new, 0, i / PGSIZE, 1);
   return -1;
 }
-
 
 // mark a PTE invalid for user access.
 // used by exec for the user stack guard page.
@@ -391,12 +396,31 @@ uvmclear(pagetable_t pagetable, uint64 va)
 // Return 0 on success, -1 on error.
 int
 copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
+
 {
   uint64 n, va0, pa0;
 
   while(len > 0){
     va0 = PGROUNDDOWN(dstva);
-    pa0 = walkaddr(pagetable, va0);
+	  pte_t *pte = walk(pagetable, va0, 0); //walking moment, to my understanding that means that we go to the address where the fault happened and then we do things
+	  //check "COW"ness
+	  if((*pte & PTE_V) && (*pte & PTE_U) && !(*pte & PTE_W) && (*pte & PTE_R)) { //if COW
+		  char *new_page = kalloc(); //new page 
+		  if(new_page == 0)
+			  return -1;
+		  uint64 pa = PTE2PA(*pte);
+		  memmove(new_page, (char*)pa, PGSIZE); //copy data over
+		  
+		  *pte = PA2PTE(new_page) | PTE_FLAGS(*pte); //set flags
+		  //*pte &= ~PTE_RSW;
+		  //*pte |= PTE_W;
+		  
+		  pa0 =(uint64)new_page; //set pa0
+	  } else {
+		  pa0 = walkaddr(pagetable, va0); //set pa0 to normal since NOT COW
+		  }
+    if(va0 > MAXVA) //check max
+	    return -1;
     if(pa0 == 0)
       return -1;
     n = PGSIZE - (dstva - va0);

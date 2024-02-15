@@ -68,28 +68,37 @@ usertrap(void)
   } else if((which_dev = devintr()) != 0){
     // ok
   } else if (r_scause() == 15) {
-	 uint64 fault_address = PGROUNDDOWN(r_stval());
-	 pte_t *pte;
-         pagetable_t pt = p->pagetable;
-	 uint64 pa;
-	 pte = walk(pt, fault_address, 0);
-	 pa = PTE2PA(*pte);
+	  //grab the procces and the other data
+	  uint64 fault_address = PGROUNDDOWN(r_stval());
+	  pte_t *pte;
+	  pagetable_t pt = p->pagetable;
+	  uint64 pa;
+	  pte = walk(pt, fault_address, 0); //walking moment, to my understanding that means that we go to the address where the fault happened and then we do things.
+	  pa = PTE2PA(*pte);
+	  //check "COW"ness
+	  if(!( (*pte & PTE_V) && (*pte & PTE_U) && !(*pte & PTE_W) && (*pte & PTE_R))) { //if is NOT a cow, aka if PTE_V, PTE_U and not PTE_W and not PT_RSW
+		  printf("Segmentation fault from proces %d at address %p\n", p->pid, r_stval());
+		  p->killed = 1;
+		  return;
+	  }
+	  //else 
+	  //if we are in the clear then move on and do the copying
+	  //um erm how do I do that lmao?
+	  char *new_page = kalloc();
+	  memmove(new_page, (char*) pa, PGSIZE);
 
-	 char *new_page = kalloc();
-	 memmove(new_page, (char*) pa, PGSIZE);
-
+	  //set flags -- we are no longer doing this
+	 
 	  uint flags = PTE_FLAGS(*pte);
 
 	  //remove old page
 	  uvmunmap(p->pagetable, fault_address, 1, 0);
 	  kfree((void*) pa);
 
-
-	 if(mappages(p->pagetable, fault_address, PGSIZE, (uint64)new_page, flags) != 0) {
-		 p->killed = 1;
-		 exit(-1);
-	 }
-
+	  if(mappages(p->pagetable, fault_address, PGSIZE, (uint64)new_page, flags)!= 0) {
+			  p->killed = 1;
+			  exit(-1);
+	  }
   } else {
     printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
     printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
