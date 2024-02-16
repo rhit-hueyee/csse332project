@@ -23,6 +23,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int thread_create(void *(*start_routine)(void *), void*, unsigned long stack);
+int thread_wait(int*, int);
 
 
 // ulib.c

@@ -174,7 +174,7 @@ int main() {
 	}
 	printf("TEST THREAD TWICE PASSED\n");
 
-  /*
+  
 
     printf("STARTING TEST FOR THREAD SINGLE ARGUMENT HANDLING\n");
     if (test_thread_increment() != 0) {
@@ -191,8 +191,6 @@ int main() {
     }
     printf("TEST MULTI ARG PASSED\n");
 
-
-    */
 
     exit(0);
 }

@@ -102,3 +102,13 @@ uint64 sys_thread_create(void)
 	argaddr(2, &addr_stck_ptr);
 	return thread_create((void*)addr_fn, (void*)addr_args, (uint64)addr_stck_ptr);
 }
+
+uint64 sys_thread_create(void)
+{
+	uint64 addr;
+	argaddr(0, &addr);
+	int pid;
+	argint(0, &pid);
+	
+	return thread_wait(addr, pid);
+}

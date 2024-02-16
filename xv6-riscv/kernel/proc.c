@@ -512,7 +512,7 @@ thread_wait(uint64 addr, int tpid)
     // Scan through table looking for exited children.
     havekids = 0;
     for(pp = proc; pp < &proc[NPROC]; pp++){
-      if(pp == tpid){
+      if(pp->pid == tpid){
         // make sure the child isn't still in exit() or swtch().
         acquire(&pp->lock);
 
