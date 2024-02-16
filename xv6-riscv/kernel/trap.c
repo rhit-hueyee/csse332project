@@ -69,6 +69,7 @@ usertrap(void)
     // ok
   } else if (r_scause() == 15) {
 	  //grab the procces and the other data
+	  printf("Adjusting COW\n");
 	  uint64 fault_address = PGROUNDDOWN(r_stval());
 	  pte_t *pte;
 	  pagetable_t pt = p->pagetable;

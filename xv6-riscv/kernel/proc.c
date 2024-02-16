@@ -337,15 +337,15 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	if((np = allocproc()) == 0){
 	return -1;
 	}
-	printf("Success Alloc Proc\n");
+	//printf("Success Alloc Proc\n");
 	
-	printf("Configuring New Proc\n");
+	//printf("Configuring New Proc\n");
 
 	np->sz = p->sz; //same size
 	np->parent = p; //setting parent to og proc
 	np->is_thread = 1; //we are creating a thread (((φ(◎ロ◎;)φ)))
 
-	printf("Completed Configuring New Proc\n");
+	//printf("Completed Configuring New Proc\n");
 
 	np->trapframe->epc = (uint64)fn; // epc starts at fn.
 	printf("The eepy sea is %d\n", (uint64)fn);
@@ -359,7 +359,7 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 		return -1;
 	}
 	
-	printf("successfully unvmcopymaped\n");
+	//printf("successfully unvmcopymaped\n");
 
 	
  for(int i = 0; i < NOFILE; i++)
@@ -374,15 +374,18 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	np->parent = p;
 	release(&wait_lock);
 	
-	printf("Set Parent\n");
+	//printf("Set Parent\n");
 
 	acquire(&np->lock);
 	np->state = RUNNABLE;
 	release(&np->lock);
 
-  printf("%d\n", fn);
-  printf("Successful thread creation\n");
+  //printf("%d\n", fn);
+  
   p->trapframe->a0 = (uint64)np->pid;
+  
+  
+  printf("Successful thread creation\n");
 	return np->pid;
 
 }

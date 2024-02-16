@@ -350,6 +350,8 @@ uvmcopymap(pagetable_t old, pagetable_t new, uint64 sz)
   uint64  i;
   uint flags;
   //char *mem;
+  
+  printf("UVM Copying Map\n");
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
@@ -399,6 +401,7 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 
 {
   uint64 n, va0, pa0;
+  printf("Copying out\n");
 
   while(len > 0){
     va0 = PGROUNDDOWN(dstva);
