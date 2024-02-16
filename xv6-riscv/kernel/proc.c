@@ -332,7 +332,7 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	struct proc *np;
 	struct proc *p = myproc();
 
-	printf("Attempting to allocate proc\n");
+	//printf("Attempting to allocate proc\n");
 
 	if((np = allocproc()) == 0){
 	return -1;
@@ -348,7 +348,7 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
 	//printf("Completed Configuring New Proc\n");
 
 	np->trapframe->epc = (uint64)fn; // epc starts at fn.
-	printf("The eepy sea is %d\n", (uint64)fn);
+	//printf("The eepy sea is %d\n", (uint64)fn);
 	np->trapframe->sp = stack_ptr; // This sets the stack pointer to the top of the stack, the onus is on the user
 	np->trapframe->a0 = (uint64)arg; //sets first argument to the arg passed in
 	
@@ -385,9 +385,8 @@ thread_create(void * (*fn)(void *), void *arg, uint64  stack_ptr)
   p->trapframe->a0 = (uint64)np->pid;
   
   
-  printf("Successful thread creation\n");
+  printf("Successful thread creation, pid = %d\n", np->pid);
 	return np->pid;
-
 }
 
 

@@ -38,7 +38,7 @@ int test_thread_print_hello_world() {
         return 1;
     }
 
-	int i = thread_create(phw_ptr, NULL, (uint64)ptr);
+	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
 	int *j = &i;
 	wait(j);
 
@@ -48,7 +48,7 @@ int test_thread_print_hello_world() {
 
 
 void *increment_and_print(void *arg) {
-	printf("Juice Check on hood keeping it 55th\n");
+	printf("Incrementing and Printign\n");
     int *val = (int*) arg;
     (*val)++;
     printf("Incremented value: %d\n", *val);
@@ -67,7 +67,7 @@ int test_thread_increment() {
     int val = -1; // Example value to increment
 
     //printf("Creating thread to increment value\n");
-    int tid = thread_create(increment_ptr, &val, (uint64)ptr); // Adjusted stack pointer to simulate stack top
+    int tid = thread_create(increment_ptr, &val, (uint64)ptr+1023); // Adjusted stack pointer to simulate stack top
     if (tid < 0) {
         printf("Thread creation failed\n");
         free(ptr); // Clean up allocated stack
@@ -91,17 +91,12 @@ int test_thread_print_hello_world_twice() {
         return 1;
     }
 
-	int i = thread_create(phw_ptr, NULL, (uint64)ptr);
+	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
 	int *j = &i;
 	wait(j);
-	
-	kill(*j);
-	int k = thread_create(phw_ptr, NULL, (uint64)ptr);
+	int k = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
 	int *l = &k;
 	wait(l);
-	
-	kill(*l);
-
     return 0; // return 0 on success, non-zero on failure
 }
 
@@ -135,7 +130,7 @@ int test_thread_with_struct_arg() {
 
     // Create the thread, passing the structure as an argument
     printf("Creating thread to modify structure\n");
-    int tid = thread_create(modify_struct_and_print, &arg, (uint64)(ptr + 1024)); // Adjusted stack pointer to simulate stack top
+    int tid = thread_create(modify_struct_and_print, &arg, (uint64)ptr+1023); // Adjusted stack pointer to simulate stack top
     if (tid < 0) {
         printf("Thread creation failed\n");
         free(ptr); // Clean up allocated stack
@@ -153,7 +148,7 @@ int test_thread_with_struct_arg() {
 
 
 int main() {
-	/*
+	
 	printf("BEGINNING TEST BASIC\n");
     if (test_thread_print_hello_world() != 0) {
 
@@ -179,13 +174,15 @@ int main() {
 	}
 	printf("TEST THREAD TWICE PASSED\n");
 
+  /*
+
     printf("STARTING TEST FOR THREAD SINGLE ARGUMENT HANDLING\n");
     if (test_thread_increment() != 0) {
         printf("Test failed\n");
         exit(1);
     }
     printf("TEST SINGLE ARG PASSED\n");
-	*/
+	
 	
 	 printf("STARTING TEST FOR PASSING A STRUCTURE TO A THREAD\n");
     if (test_thread_with_struct_arg() != 0) {
@@ -193,6 +190,9 @@ int main() {
         exit(1);
     }
     printf("TEST MULTI ARG PASSED\n");
+
+
+    */
 
     exit(0);
 }

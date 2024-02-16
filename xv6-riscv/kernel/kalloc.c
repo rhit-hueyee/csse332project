@@ -87,8 +87,10 @@ kalloc(void)
 
   acquire(&kmem.lock);
   r = kmem.freelist;
-  if(r)
+  if(r){
+    kmem.total_frames[FRINDEX(r)] = 1;
     kmem.freelist = r->next;
+  }
   release(&kmem.lock);
 
   if(r)
