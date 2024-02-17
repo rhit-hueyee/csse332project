@@ -38,9 +38,9 @@ int test_thread_print_hello_world() {
         return 1;
     }
 
-	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
-	int *j = &i;
-	wait(j);
+	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1024);
+	//int *j = &i;
+	thread_wait(NULL, i);
 
     return 0; // return 0 on success, non-zero on failure
 }
@@ -67,15 +67,15 @@ int test_thread_increment() {
     int val = -1; // Example value to increment
 
     //printf("Creating thread to increment value\n");
-    int tid = thread_create(increment_ptr, &val, (uint64)ptr+1023); // Adjusted stack pointer to simulate stack top
+    int tid = thread_create(increment_ptr, &val, (uint64)ptr+1024); // Adjusted stack pointer to simulate stack top
     if (tid < 0) {
         printf("Thread creation failed\n");
         free(ptr); // Clean up allocated stack
         return 1;
     }
 
-    int *retval = &tid;
-    wait(retval); // Wait for the thread to finish
+    //int *retval = &tid;
+    thread_wait(NULL, tid); // Wait for the thread to finish
     //printf("Thread finished with incremented value: %d\n", val);
     
     free(ptr); // Clean up allocated stack
@@ -91,12 +91,18 @@ int test_thread_print_hello_world_twice() {
         return 1;
     }
 
-	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
-	int *j = &i;
-	wait(j);
-	int k = thread_create(phw_ptr, NULL, (uint64)ptr+1023);
-	int *l = &k;
-	wait(l);
+	int i = thread_create(phw_ptr, NULL, (uint64)ptr+1024);
+	//int *j = &i;
+	//wait(j);
+	
+	thread_wait(NULL, i);
+	
+	int* ptr2 = (int*)malloc(1024); 
+	
+	int k = thread_create(phw_ptr, NULL, (uint64)ptr2+1024);
+	//int *l = &k;
+	//wait(l);
+	thread_wait(NULL, k);
     return 0; // return 0 on success, non-zero on failure
 }
 
@@ -130,15 +136,17 @@ int test_thread_with_struct_arg() {
 
     // Create the thread, passing the structure as an argument
     printf("Creating thread to modify structure\n");
-    int tid = thread_create(modify_struct_and_print, &arg, (uint64)ptr+1023); // Adjusted stack pointer to simulate stack top
+    int tid = thread_create(modify_struct_and_print, &arg, (uint64)ptr+1024); // Adjusted stack pointer to simulate stack top
     if (tid < 0) {
         printf("Thread creation failed\n");
         free(ptr); // Clean up allocated stack
         return 1;
     }
+	
+	thread_wait(NULL, tid);
 
-    int *retval = &tid;
-    wait(retval); // Wait for the thread to finish
+    //int *retval = &tid;
+    //wait(retval); // Wait for the thread to finish
     printf("Main thread: Modified values: a = %d, b = %d\n", arg.a, arg.b);
     
     free(ptr); // Clean up allocated stack
@@ -190,6 +198,8 @@ int main() {
         exit(1);
     }
     printf("TEST MULTI ARG PASSED\n");
+	
+	printf("百パーセント\n");
 
 
     exit(0);

@@ -103,7 +103,7 @@ uint64 sys_thread_create(void)
 	return thread_create((void*)addr_fn, (void*)addr_args, (uint64)addr_stck_ptr);
 }
 
-uint64 sys_thread_create(void)
+uint64 sys_thread_wait(void)
 {
 	uint64 addr;
 	argaddr(0, &addr);
