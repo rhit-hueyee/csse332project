@@ -505,7 +505,7 @@ thread_wait(uint64 addr, int tpid)
   struct proc *pp;
   int havekids, pid;
   struct proc *p = myproc();
-
+  printf("in thread_wait, addr %d, tpid %d\n", addr, tpid);
   acquire(&wait_lock);
 
   for(;;){
