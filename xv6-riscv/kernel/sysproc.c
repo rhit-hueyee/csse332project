@@ -108,7 +108,7 @@ uint64 sys_thread_wait(void)
 	uint64 addr;
 	argaddr(0, &addr);
 	int pid;
-	argint(0, &pid);
+	argint(1, &pid);
 	
 	return thread_wait(addr, pid);
 }

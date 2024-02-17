@@ -505,14 +505,14 @@ thread_wait(uint64 addr, int tpid)
   struct proc *pp;
   int havekids, pid;
   struct proc *p = myproc();
-  printf("in thread_wait, addr %d, tpid %d\n", addr, tpid);
+  //printf("in thread_wait, addr %d, tpid %d\n", addr, tpid);
   acquire(&wait_lock);
 
   for(;;){
     // Scan through table looking for exited children.
     havekids = 0;
     for(pp = proc; pp < &proc[NPROC]; pp++){
-		printf("pp: %d, tpid: %d\n", pp->pid, tpid);
+		//printf("pp: %d, tpid: %d\n", pp->pid, tpid);
       if(pp->parent == p && pp->pid == tpid){
         // make sure the child isn't still in exit() or swtch().
         acquire(&pp->lock);
