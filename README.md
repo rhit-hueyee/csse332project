@@ -1,3 +1,5 @@
 # csse332project
+Creating a simple threading Library for the xv6 operating system.
 
-two goobers learn how to thread
+# Authors
+Ethan Huey and Theo Berklich
